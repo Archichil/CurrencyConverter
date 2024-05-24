@@ -44,9 +44,9 @@ struct HomeView: View {
         }
         .toolbar(content: {
             Menu(viewModel.baseCurrency, content: {
-                ForEach(currencies, id: \.self){ name in
-                    Button(action: {viewModel.updateRelativeRates(baseCurrency: name)}, label: {
-                        Text(name)
+                ForEach(currenciesFull.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
+                    Button(action: { viewModel.updateRelativeRates(baseCurrency: key) }, label: {
+                        Text(value)
                     })
                 }
             })

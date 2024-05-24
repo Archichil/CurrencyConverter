@@ -50,12 +50,12 @@ class FetchData: ObservableObject {
         self.baseCurrency = baseCurrency
         if baseCurrency == "BYN" {fetch()}
         // Найдем курс базовой валюты
-        guard var baseRate = self.conversionData.first(where: { $0.curAbbreviation == baseCurrency }) else {
+        guard let baseRate = self.conversionData.first(where: { $0.curAbbreviation == baseCurrency }) else {
             // Базовая валюта не найдена в данных
             return
         }
         
-        var currencyRate = baseRate.curOfficialRate / Double(baseRate.curScale)
+        let currencyRate = baseRate.curOfficialRate / Double(baseRate.curScale)
         
         // Обновляем курсы для остальных валют в массиве
         for i in 0..<self.conversionData.count {
