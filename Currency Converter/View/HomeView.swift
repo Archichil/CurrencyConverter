@@ -12,54 +12,48 @@ struct HomeView: View {
     @StateObject var viewModel = FetchData()
     
     var body: some View {
-//        ScrollView {
-//            LazyVStack(alignment: .leading, spacing: 15) {
-//                ForEach(viewModel.conversionData) { currency in
-//                    HStack(spacing: 15){
-//                        Text(currency.curAbbreviation)
-//                    }
-//                    .padding(.horizontal)
-//                    VStack(alignment: .leading) {
-//                        Text("\(String(currency.curScale)) \(currency.curName)")
-//                            .font(.headline)
-//                        Text("Abbreviation: \(currency.curAbbreviation)")
-//                            .font(.subheadline)
-//                        Text("Rate: \(currency.curOfficialRate)")
-//                            .font(.subheadline)
-//                    }
-//                    .padding()
-//                    .background(Color(UIColor.secondarySystemBackground))
-//                    .cornerRadius(10)
-//                }
-//            }
-//            .padding()
-//        }
         
-        ScrollView{
-            
-            LazyVStack(alignment: .leading, spacing: 15, content: {
-                ForEach(viewModel.conversionData){ currency in
-                    HStack(spacing: 15){
-                        
-                        Text(GetFlag(abbr: currency.curAbbreviation))
-                            .font(.system(size: 55))
-                        
-                        VStack(alignment: .leading, spacing: 5, content: {
-                            Text("\(currency.curScale) \(currency.curAbbreviation)")
-                                .font(.title)
-                                .fontWeight(.bold)
-                            
-                            Text("\(currency.curOfficialRate) BYN")
-                                .fontWeight(.heavy)
-                        })
-                    }
-                    .padding(.horizontal)
+        VStack {
+            if !viewModel.conversionData.isEmpty {
+                ScrollView{
+                    
+                    LazyVStack(alignment: .leading, spacing: 15, content: {
+                        ForEach(viewModel.conversionData){ currency in
+                            HStack(spacing: 15){
+                                
+                                Text(GetFlag(abbr: currency.curAbbreviation))
+                                    .font(.system(size: 55))
+                                
+                                VStack(alignment: .leading, spacing: 5, content: {
+                                    Text("\(currency.curScale) \(currency.curName) (\(currency.curAbbreviation))")
+                                        .font(.system(size: 20))
+                                        .fontWeight(.bold)
+                                    
+                                    Text("\(currency.curOfficialRate) \(viewModel.baseCurrency)")
+                                        .fontWeight(.heavy)
+                                })
+                            }
+                            .padding(.horizontal)
+                        }
+                    })
+                    .padding(.top)
+                }
+            } else {
+                ProgressView()
+            }
+        }
+        .toolbar(content: {
+            Menu(viewModel.baseCurrency, content: {
+                ForEach(currencies, id: \.self){ name in
+                    Button(action: {viewModel.updateRelativeRates(baseCurrency: name)}, label: {
+                        Text(name)
+                    })
                 }
             })
-            .padding(.top)
-        }
+        })
         
     }
+    
     
     func GetFlag(abbr currencyAbbr: String) -> String {
         if currencyAbbr == "XDR" {return ""}

@@ -9,6 +9,7 @@ import SwiftUI
 
 class FetchData: ObservableObject {
     @Published var conversionData: [Currency] = []
+    @Published var baseCurrency: String = "BYN"
     
     init() {
         fetch()
@@ -31,12 +32,10 @@ class FetchData: ObservableObject {
                     return
                 }
                 
-                // Декодирование данных
                 do {
                     let currencies = try JSONDecoder().decode([Currency].self, from: data)
-                    // Обработка данных на главном потоке
+                    
                     DispatchQueue.main.async {
-                        // Пример: обновление UI
                         self.conversionData = currencies
                     }
                 } catch {
@@ -46,4 +45,30 @@ class FetchData: ObservableObject {
         }
     }
     
+    func updateRelativeRates(baseCurrency: String) {
+        
+        self.baseCurrency = baseCurrency
+        if baseCurrency == "BYN" {fetch()}
+        // Найдем курс базовой валюты
+        guard var baseRate = self.conversionData.first(where: { $0.curAbbreviation == baseCurrency }) else {
+            // Базовая валюта не найдена в данных
+            return
+        }
+        
+        var currencyRate = baseRate.curOfficialRate / Double(baseRate.curScale)
+        
+        // Обновляем курсы для остальных валют в массиве
+        for i in 0..<self.conversionData.count {
+            // Пропускаем базовую валюту
+//            guard self.conversionData[i].curAbbreviation != baseCurrency else {
+//                return
+//            }
+            
+            // Вычисляем относительное значение курса для текущей валюты
+            let relativeRate = (self.conversionData[i].curOfficialRate / Double(self.conversionData[i].curScale)) / currencyRate * Double(self.conversionData[i].curScale)
+            
+            // Перезаписываем значение курса для текущей валюты в массиве
+            self.conversionData[i].curOfficialRate = relativeRate
+        }
+    }
 }
