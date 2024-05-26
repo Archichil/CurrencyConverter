@@ -12,46 +12,48 @@ struct HomeView: View {
     @StateObject var viewModel = FetchData()
     
     var body: some View {
-        
-        VStack {
-            if !viewModel.conversionData.isEmpty {
-                ScrollView{
-                    
-                    LazyVStack(alignment: .leading, spacing: 15, content: {
-                        ForEach(viewModel.conversionData){ currency in
-                            HStack(spacing: 15){
-                                
-                                Text(GetFlag(abbr: currency.curAbbreviation))
-                                    .font(.system(size: 55))
-                                
-                                VStack(alignment: .leading, spacing: 5, content: {
-                                    Text("\(currency.curScale) \(currency.curName) (\(currency.curAbbreviation))")
-                                        .font(.system(size: 20))
-                                        .fontWeight(.bold)
+        NavigationView {
+            VStack {
+                if !viewModel.conversionData.isEmpty {
+                    ScrollView{
+                        Text(getDate(dateString: viewModel.conversionData.first!.date))
+                        
+                        LazyVStack(alignment: .leading, spacing: 15, content: {
+                            ForEach(viewModel.conversionData){ currency in
+                                HStack(spacing: 15){
                                     
-                                    Text("\(currency.curOfficialRate) \(viewModel.baseCurrency)")
-                                        .fontWeight(.heavy)
-                                })
+                                    Text(GetFlag(abbr: currency.curAbbreviation))
+                                        .font(.system(size: 55))
+                                    
+                                    VStack(alignment: .leading, spacing: 5, content: {
+                                        Text("\(currency.curScale) \(currency.curName) (\(currency.curAbbreviation))")
+                                            .font(.system(size: 20))
+                                            .fontWeight(.bold)
+                                        
+                                        Text("\(currency.curOfficialRate) \(viewModel.baseCurrency)")
+                                            .fontWeight(.heavy)
+                                    })
+                                }
+                                .padding(.horizontal)
                             }
-                            .padding(.horizontal)
-                        }
-                    })
-                    .padding(.top)
+                        })
+                        .padding(.top)
+                    }
+                } else {
+                    ProgressView()
                 }
-            } else {
-                ProgressView()
             }
-        }
-        .toolbar(content: {
-            Menu(viewModel.baseCurrency, content: {
-                ForEach(currenciesFull.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
-                    Button(action: { viewModel.updateRelativeRates(baseCurrency: key) }, label: {
-                        Text(value)
-                    })
-                }
+            .toolbar(content: {
+                Menu(viewModel.baseCurrency, content: {
+                    ForEach(currenciesFull.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
+                        Button(action: { viewModel.updateRelativeRates(baseCurrency: key) }, label: {
+                            Text(value)
+                        })
+                    }
+                })
             })
-        })
-        
+            .navigationTitle("Currency Rates")
+        }
     }
     
     
@@ -70,7 +72,6 @@ struct HomeView: View {
             }
             scalar.append(flagScalar)
         }
-        print(String(scalar))
         return String(scalar)
     }
 
