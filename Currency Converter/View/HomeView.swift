@@ -74,6 +74,26 @@ struct HomeView: View {
         }
         return String(scalar)
     }
+    
+    func getDate(dateString: String) -> String {
+        let inputDateFormatter = DateFormatter()
+        inputDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        inputDateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        inputDateFormatter.locale = Locale(identifier: "ru-RU")
+
+        if let date = inputDateFormatter.date(from: dateString) {
+            let outputDateFormatter = DateFormatter()
+            outputDateFormatter.dateStyle = .medium
+            outputDateFormatter.timeStyle = .medium
+            outputDateFormatter.locale = Locale(identifier: "ru-RU")
+            outputDateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+
+            let dateStr = outputDateFormatter.string(from: date)
+            return "Последнее обновление курса НБРБ:\n\(dateStr)"
+        } else {
+            return "Последнее обновление курса НБРБ: Неизвестно"
+        }
+    }
 
 }
 
