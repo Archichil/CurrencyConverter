@@ -59,10 +59,6 @@ class FetchData: ObservableObject {
         
         // Обновляем курсы для остальных валют в массиве
         for i in 0..<self.conversionData.count {
-            // Пропускаем базовую валюту
-//            guard self.conversionData[i].curAbbreviation != baseCurrency else {
-//                return
-//            }
             
             // Вычисляем относительное значение курса для текущей валюты
             let relativeRate = (self.conversionData[i].curOfficialRate / Double(self.conversionData[i].curScale)) / currencyRate * Double(self.conversionData[i].curScale)
@@ -71,4 +67,22 @@ class FetchData: ObservableObject {
             self.conversionData[i].curOfficialRate = relativeRate
         }
     }
+    
+    func convert(amount: Double, from fromCurrency: String, to toCurrency: String) -> Double? {
+            if fromCurrency == baseCurrency {
+                guard let toRate = conversionData.first(where: { $0.curAbbreviation == toCurrency }) else {
+                    return nil
+                }
+                let convertedAmount = (amount / toRate.curOfficialRate) * Double(toRate.curScale)
+                return convertedAmount
+            } else if toCurrency == baseCurrency {
+                guard let fromRate = conversionData.first(where: { $0.curAbbreviation == fromCurrency }) else {
+                    return nil
+                }
+                let amountInBaseCurrency = (amount / Double(fromRate.curScale)) * fromRate.curOfficialRate
+                return amountInBaseCurrency
+            } else {
+                return nil
+            }
+        }
 }
