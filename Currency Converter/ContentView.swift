@@ -9,17 +9,27 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        NavigationView {
-           HomeView()
-                .navigationTitle("Currency Rates")
-                .preferredColorScheme(.dark)
+        
+        TabView {
+            HomeView()
+                .tabItem {
+                    Image(systemName: "dollarsign.circle")
+                    Text("Currency Rates")
+                }
+            
+            ConverterView()
+                .tabItem {
+                    Image(systemName: "sum")
+                    Text("Calculator")
+                }
         }
-//        HomeView()
     }
 }
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
     }
 }
+
