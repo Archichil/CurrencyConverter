@@ -10,6 +10,17 @@ import SwiftUI
 struct HomeView: View {
     
     @StateObject var viewModel = FetchData()
+    @State private var searchTerm = ""
+    
+    
+    var filteredCurrencies: [Currency] {
+        guard !searchTerm.isEmpty else { return viewModel.conversionData }
+        
+        return viewModel.conversionData.filter { currency in
+            currency.curName.lowercased().contains(searchTerm.lowercased()) ||
+            currency.curAbbreviation.lowercased().contains(searchTerm.lowercased())
+        }
+    }
     
     var body: some View {
         NavigationView {
@@ -19,7 +30,7 @@ struct HomeView: View {
                         Text(getDate(dateString: viewModel.conversionData.first!.date))
                         
                         LazyVStack(alignment: .leading, spacing: 15, content: {
-                            ForEach(viewModel.conversionData){ currency in
+                            ForEach(filteredCurrencies){ currency in
                                 HStack(spacing: 15){
                                     
                                     Text(GetFlag(abbr: currency.curAbbreviation))
@@ -53,6 +64,7 @@ struct HomeView: View {
                 })
             })
             .navigationTitle("Currency Rates")
+            .searchable(text: $searchTerm, prompt: "Search a currency")
         }
     }
     
