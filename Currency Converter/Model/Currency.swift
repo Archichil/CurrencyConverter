@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Currency: Codable, Identifiable {
+struct Currency: Decodable, Identifiable {
     let curID: Int
     let date: String
     let curAbbreviation: String
@@ -29,7 +29,7 @@ struct Currency: Codable, Identifiable {
         }
 }
 
-var currenciesFull: [String: String] = [
+let currenciesFull: [String: String] = [
     "AUD": "AUD (Австралийский доллар)",
     "AMD": "AMD (Армянский драм)",
     "BGN": "BGN (Болгарский лев)",

@@ -13,6 +13,7 @@ struct ConverterView: View {
     @State var itemSelectedTo = "USD"
     @State var amount: String = ""
     @State var result: String = ""
+    @FocusState private var isInputActive: Bool
     
     var body: some View {
         NavigationView {
@@ -20,6 +21,7 @@ struct ConverterView: View {
                 Section(header: Text("Convert a currency")) {
                     TextField("Enter an amount", text: $amount)
                         .keyboardType(.decimalPad)
+                        .focused($isInputActive)
                         .onChange(of: amount) { newValue in
                             convertAmount()
                         }
@@ -52,6 +54,14 @@ struct ConverterView: View {
                 }
             }
             .navigationBarTitle("Calculator")
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") {
+                        isInputActive = false
+                    }
+                }
+            }
         }
     }
     
