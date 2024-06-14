@@ -50,6 +50,9 @@ struct HomeView: View {
                         })
                         .padding(.top)
                     }
+                    .refreshable {
+                        viewModel.fetch()
+                    }
                 } else {
                     ProgressView()
                 }

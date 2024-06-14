@@ -11,6 +11,8 @@ class FetchData: ObservableObject {
     @Published var conversionData: [Currency] = []
     @Published var baseCurrency: String = "BYN"
     
+    private let jsonDecoder: JSONDecoder = JSONDecoder()
+    
     init() {
         fetch()
     }
@@ -18,7 +20,6 @@ class FetchData: ObservableObject {
     func fetch(){
         
         let urlString = "https://api.nbrb.by/exrates/rates?periodicity=0"
-        
         
         if let url = URL(string: urlString) {
             URLSession.shared.dataTask(with: url) { data, response, error in
@@ -33,7 +34,7 @@ class FetchData: ObservableObject {
                 }
                 
                 do {
-                    let currencies = try JSONDecoder().decode([Currency].self, from: data)
+                    let currencies = try self.jsonDecoder.decode([Currency].self, from: data)
                     
                     DispatchQueue.main.async {
                         self.conversionData = currencies
